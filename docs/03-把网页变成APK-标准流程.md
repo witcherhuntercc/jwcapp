@@ -90,6 +90,16 @@ npx cap add android
 
 ## 第 5 步：构建
 
+> **出包前先做一次"移动端就绪度自检"**（否则很容易出现"内容顶到状态栏""右滑直接退出应用"）：
+>
+> ```powershell
+> ..\jwcapp\scripts\check-mobile-readiness.ps1 -ProjectDir . -WebSource <前端源码目录>
+> ```
+>
+> 它检查：是否装了 `@capacitor/app`（返回手势/退出确认）与 `@capacitor/status-bar`（状态栏）、
+> `targetSdk` 是否触发 Android 15+ 的强制 edge-to-edge、前端是否配了 `viewport-fit=cover` / safe-area、`100vh` 用量。
+> 成因与修复对照见 [06-移动端适配与容器能力.md](06-移动端适配与容器能力.md)。
+
 ```powershell
 ..\jwcapp\scripts\build-apk.ps1 -ProjectDir .
 # 或手动：

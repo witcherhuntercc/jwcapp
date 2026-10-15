@@ -44,7 +44,9 @@
 | `docs/03-把网页变成APK-标准流程.md` | **新项目接入手册**：从零到真机可装，一条条命令 |
 | `docs/04-实测记录.md` | 首次构建与"手机看到真实应用"的完整落地记录（含验证证据） |
 | `docs/05-架构原则-本地算力优先.md` | 部署判断原则：本地算力优先 + 云端轻接入；负载均衡/隧道/反向代理的分工；云服务器何时仍值得花钱 |
+| `docs/06-移动端适配与容器能力.md` | **"App 里像网页"的成因与修法**：什么才算架构缺陷、容器 vs uni-app 的差异、修复对照表、出包前自检 |
 | `scripts/build-apk.ps1` | 一键构建 debug APK（已固化 JDK21 / Android SDK / 国内镜像） |
+| `scripts/check-mobile-readiness.ps1` | **出包前自检**：插件是否齐、打包模式、edge-to-edge 风险、viewport/safe-area/100vh 用量 |
 | `template/` | 需要手工改的那几个配置文件的样板（Gradle 镜像、SDK 版本等） |
 
 ---
@@ -69,9 +71,15 @@ npx cap add android
 
 # 4) 一键出包
 ..\jwcapp\scripts\build-apk.ps1 -ProjectDir .
+
+# 4.5) ★ 出包前自检（别靠记忆）
+..\jwcapp\scripts\check-mobile-readiness.ps1 -ProjectDir . -WebSource <前端源码目录>
 ```
 
 产物：`android\app\build\outputs\apk\debug\app-debug.apk`
+
+> **自检里出现 FAIL 就先补，别出包。** 首次接新项目最常见的两项：没装 `@capacitor/app`（右滑/返回键直接退出应用）、没装 `@capacitor/status-bar`（内容顶到状态栏）。
+> 成因与修法见 [docs/06-移动端适配与容器能力.md](docs/06-移动端适配与容器能力.md)。
 
 > **两种打包模式**（先想清楚再动手）：
 > - **远程 URL**（`server.url = https://你的域名`）：前端一改即刻生效、不用重发 APK。适合内部试用/快速迭代；Capacitor 官方把它定位为开发用途，正式发布前要重新评估。
