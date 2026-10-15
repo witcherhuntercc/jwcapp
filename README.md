@@ -7,6 +7,21 @@
 
 ---
 
+## 本库采用的方案（决策记录）
+
+**Capacitor** —— 上游 `ionic-team/capacitor`，实测版本 **8.5.3**。本仓库的脚本、模板、文档全部围绕这一条路线。
+
+| 项 | 值 |
+|----|-----|
+| 上游仓库 | https://github.com/ionic-team/capacitor |
+| 实测版本 | `@capacitor/core` = `@capacitor/cli` = `@capacitor/android` = **8.5.3** |
+| 参考源码 | `E:\myprojects\web2app-eval\capacitor`（`--depth 1` 浅克隆，仅作对照） |
+| 未被采用的三个 | **Tauri v2**：本机无 Rust/NDK，收益（体积）不匹配诉求；**Bubblewrap（TWA）**：由设备 Chrome 渲染 + 依赖 Google Play，国内机型结构性不适用；**HBuilderX + DCloud**：不是开源项目、封闭生态，但作为"当天出包"的备选保留 |
+
+> 三个未采用的候选源码仍留在 `E:\myprojects\web2app-eval`（浅克隆）供查阅；**本库只维护 Capacitor 路线**，不维护它们的构建配方。
+
+---
+
 ## 30 秒结论
 
 | 你的需求 | 用哪个 | 为什么 |
@@ -28,6 +43,7 @@
 | `docs/02-环境清单与踩坑.md` | 本机工具链的确切路径 + 全部踩过的坑（JDK/Gradle镜像/CORS/MinIO/workbox…） |
 | `docs/03-把网页变成APK-标准流程.md` | **新项目接入手册**：从零到真机可装，一条条命令 |
 | `docs/04-实测记录.md` | 首次构建与"手机看到真实应用"的完整落地记录（含验证证据） |
+| `docs/05-架构原则-本地算力优先.md` | 部署判断原则：本地算力优先 + 云端轻接入；负载均衡/隧道/反向代理的分工；云服务器何时仍值得花钱 |
 | `scripts/build-apk.ps1` | 一键构建 debug APK（已固化 JDK21 / Android SDK / 国内镜像） |
 | `template/` | 需要手工改的那几个配置文件的样板（Gradle 镜像、SDK 版本等） |
 
@@ -65,7 +81,7 @@ npx cap add android
 
 ## 关键约束（从踩坑里提炼的硬规矩）
 
-1. **Java 必须 21**（Capacitor 7 的 android 库 `sourceCompatibility VERSION_21`）；AGP 要求的 ≥17 只是底线。
+1. **Java 必须 21**（Capacitor **8.5.3** 的 android 库 `sourceCompatibility VERSION_21`）；AGP 要求的 ≥17 只是底线。
 2. **Gradle 走国内镜像**：官方源实测 15 KB/s（131MB 要 2.4 小时），腾讯镜像 1257 KB/s（2 分钟）。
 3. **Maven 依赖走国内镜像，但官方仓库保留在镜像之后**做回退，不要整体替换。
 4. **公网域名必须进后端 CORS 白名单**，否则带 Origin 的 POST 一律 403（"没有权限访问"最常见的原因）。

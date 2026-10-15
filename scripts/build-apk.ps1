@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     本脚本固化的是"本机实测能跑通的那套组合"，避免重复踩坑：
-      - JAVA_HOME 必须 JDK 21（Capacitor 7 的 android 库 sourceCompatibility=VERSION_21；
+      - JAVA_HOME 必须 JDK 21（Capacitor 8.5.3 的 android 库 sourceCompatibility=VERSION_21；
         JDK 17 会报 "错误: 无效的源发行版：21"）
       - ANDROID_HOME 指向本机 Android SDK（需含 platforms/build-tools 36）
       - Gradle 发行包走腾讯镜像、Maven 走阿里镜像（这两个配置在 android 工程里，不在本脚本）
