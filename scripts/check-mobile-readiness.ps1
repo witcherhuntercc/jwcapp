@@ -73,8 +73,20 @@ if (Test-Path $varsPath) {
     $m = Select-String -Path $varsPath -Pattern 'targetSdkVersion\s*=\s*(\d+)' | Select-Object -First 1
     if ($m) {
         $sdk = [int]$m.Matches[0].Groups[1].Value
-        if ($sdk -ge 35) { Note 'WARN' "targetSdk=$sdk" 'Android 15+ 会强制 edge-to-edge（系统行为，原生 App 同样如此）→ 必须自己处理 insets：容器侧 StatusBar 或前端 safe-area' }
-        else { Note 'OK' "targetSdk=$sdk" '未触发强制 edge-to-edge' }
+        # 若原生侧已经消费 insets，则"强制 edge-to-edge"不再是风险
+        $activity = Get-ChildItem (Join-Path $project 'android') -Recurse -Filter 'MainActivity.java' -ErrorAction SilentlyContinue | Select-Object -First 1
+        $insetsHandled = $false
+        if ($activity) {
+            $code = Get-Content $activity.FullName -Raw -Encoding UTF8
+            if ($code -match 'setOnApplyWindowInsetsListener|setDecorFitsSystemWindows|WindowInsetsCompat\.Type\.systemBars') { $insetsHandled = $true }
+        }
+        if ($sdk -ge 35 -and (-not $insetsHandled)) {
+            Note 'WARN' "targetSdk=$sdk" 'Android 15+ 强制 edge-to-edge，且原生侧未消费 insets → 内容会绘制到状态栏下方（装 @capacitor/status-bar，或参考 template 的 MainActivity 改造）'
+        } elseif ($sdk -ge 35) {
+            Note 'OK' "targetSdk=$sdk" 'Android 15+ 强制 edge-to-edge，但原生侧已消费 insets（systemBars/刘海/IME）'
+        } else {
+            Note 'OK' "targetSdk=$sdk" '未触发强制 edge-to-edge'
+        }
     }
 } else {
     Note 'FAIL' 'Android 工程' "未找到 $varsPath（是否还没执行 npx cap add android？）"

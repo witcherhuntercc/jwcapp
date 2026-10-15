@@ -9,6 +9,7 @@ Capacitor 用 `npx cap add android` 自动生成的工程里，**只有 4 个文
 | `android/gradle/wrapper/gradle-wrapper.properties` | 同名路径 | `distributionUrl` 指向腾讯镜像（官方源注释保留） |
 | `android/build.gradle` | 同名路径 | 两处 `repositories` 加阿里镜像（官方仓库保留在后） |
 | `android/variables.gradle` | 同名路径 | SDK 版本（当前模板：minSdk 24 / compileSdk 36 / targetSdk 36） |
+| `android/MainActivity.sample.java` | `android/app/src/main/java/<包路径>/MainActivity.java` | **移动端改造**：状态栏/刘海/键盘 insets + 返回手势（可回退则回退，根页面"再按一次退出"）。改完记得把 `package` 改成你的包名 |
 
 > 详细步骤与原因：见 [../docs/03-把网页变成APK-标准流程.md](../docs/03-把网页变成APK-标准流程.md) 与 [../docs/02-环境清单与踩坑.md](../docs/02-环境清单与踩坑.md)。
 
