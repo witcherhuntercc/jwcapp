@@ -1,0 +1,9 @@
+{
+  "appId": "com.example.myapp",
+  "appName": "我的应用",
+  "webDir": "www",
+  "server": {
+    "url": "https://你的域名",
+    "androidScheme": "https"
+  }
+}
