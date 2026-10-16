@@ -28,9 +28,10 @@
 param(
     [string]$ProjectDir = '.',
     [switch]$SkipSync,
-    [string]$JavaHome = 'E:\tools\jdk-21\jdk-21.0.2',
-    [string]$AndroidSdk = 'E:\tools\Android\Sdk',
-    [string]$NodeDir = 'E:\mywork\jwcenv\nodejs'
+    # 工具链路径：优先参数 / 环境变量，其次自动探测工作区同级的 jwcenv（G17 路径零硬编码）
+    [string]$JavaHome   = $env:JWC_JDK21,
+    [string]$AndroidSdk = $(if ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { $env:ANDROID_SDK_ROOT }),
+    [string]$NodeDir    = $env:JWC_NODE
 )
 
 $ErrorActionPreference = 'Stop'
@@ -40,6 +41,11 @@ function Fail($msg, $hint) {
     if ($hint) { Write-Host "    $hint" -ForegroundColor Yellow }
     exit 1
 }
+
+# ---- 工具链自动探测：<工作区>\jwcenv\{jdk21,nodejs}；找不到则由下方校验报错并给提示 ----
+$jwcenv = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'jwcenv'
+if (-not $JavaHome -and (Test-Path (Join-Path $jwcenv 'jdk21')))  { $JavaHome = Join-Path $jwcenv 'jdk21' }
+if (-not $NodeDir  -and (Test-Path (Join-Path $jwcenv 'nodejs'))) { $NodeDir  = Join-Path $jwcenv 'nodejs' }
 
 $project = (Resolve-Path -LiteralPath $ProjectDir).Path
 $androidDir = Join-Path $project 'android'
